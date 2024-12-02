@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Detail Pembayaran</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Kode Booking: {{ booking.booking_code }}</h5>
+                        <p>Silakan simpan kode booking Anda untuk keperluan verifikasi.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Detail Pertunjukan</h5>
+                        <table class="table">
+                            <tr>
+                                <th>Pertunjukan</th>
+                                <td>{{ booking.schedule.show.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>Tanggal</th>
+                                <td>{{ booking.schedule.date.strftime('%d %B %Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Waktu</th>
+                                <td>{{ booking.schedule.date.strftime('%H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Jumlah Tiket</th>
+                                <td>{{ booking.ticket_count }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Pembayaran</th>
+                                <td>Rp {{ (booking.ticket_count * booking.schedule.price)|format_price }}</td>
+                            </tr>
+                            <tr>
+                                <th>Metode Pembayaran</th>
+                                <td>{{ booking.payment_method }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">Instruksi Pembayaran</h5>
+                        <p>Silakan lakukan pembayaran sesuai dengan metode yang dipilih:</p>
+                        {% if booking.payment_method == 'gopay' %}
+                        <ol>
+                            <li>Buka aplikasi Gojek</li>
+                            <li>Pilih menu Pay</li>
+                            <li>Scan QR Code atau masukkan nomor virtual account</li>
+                            <li>Masukkan nominal sesuai total pembayaran</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                        {% elif booking.payment_method == 'ovo' %}
+                        <ol>
+                            <li>Buka aplikasi OVO</li>
+                            <li>Pilih menu Transfer</li>
+                            <li>Masukkan nomor virtual account</li>
+                            <li>Masukkan nominal sesuai total pembayaran</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                        {% elif booking.payment_method == 'dana' %}
+                        <ol>
+                            <li>Buka aplikasi DANA</li>
+                            <li>Pilih menu Kirim Uang</li>
+                            <li>Masukkan nomor virtual account</li>
+                            <li>Masukkan nominal sesuai total pembayaran</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                        {% else %}
+                        <ol>
+                            <li>Datang ke lokasi pertunjukan minimal 1 jam sebelum acara dimulai</li>
+                            <li>Tunjukkan kode booking Anda</li>
+                            <li>Lakukan pembayaran di tempat</li>
+                        </ol>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('my_bookings') }}" class="btn btn-primary">Lihat Pesanan Saya</a>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Kembali ke Beranda</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

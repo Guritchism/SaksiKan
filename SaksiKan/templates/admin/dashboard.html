@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kelola Pertunjukan</h5>
+                    <p class="card-text">Tambah, edit, atau hapus pertunjukan teater.</p>
+                    <a href="{{ url_for('manage_shows') }}" class="btn btn-primary">Kelola Pertunjukan</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kelola Jadwal</h5>
+                    <p class="card-text">Atur jadwal untuk setiap pertunjukan.</p>
+                    <a href="{{ url_for('list_shows_schedules') }}" class="btn btn-primary">Kelola Jadwal</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kelola Pengguna</h5>
+                    <p class="card-text">Kelola pengguna dan hak akses admin.</p>
+                    <a href="{{ url_for('manage_users') }}" class="btn btn-primary">Kelola Pengguna</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kelola Booking</h5>
+                    <p class="card-text">Verifikasi pembayaran dan kelola booking.</p>
+                    <a href="{{ url_for('manage_bookings') }}" class="btn btn-primary">Kelola Booking</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistik</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Total Pertunjukan</h6>
+                                    <h2>{{ shows|length }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Total Jadwal</h6>
+                                    <h2>{{ schedules|length }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Total Pengguna</h6>
+                                    <h2>{{ users|length }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Total Booking</h6>
+                                    <h2>{{ bookings|length }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

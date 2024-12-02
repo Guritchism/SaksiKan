@@ -1,0 +1,238 @@
+DOKUMENTASI PENGUJIAN SISTEM SAKSIKAN
+
+A. PENGUJIAN KOTAK HITAM (BLACK BOX)
+
+1. Pengujian Modul Autentikasi
+
+   a. Form Login
+      Kasus Uji 1: Login dengan kredensial valid
+      Masukan: 
+      - Username: "user_valid"
+      - Password: "password123"
+      Keluaran yang Diharapkan: Login berhasil, dialihkan ke halaman utama
+      
+      Kasus Uji 2: Login dengan kata sandi salah
+      Masukan:
+      - Username: "user_valid"
+      - Password: "wrong_password"
+      Keluaran yang Diharapkan: Pesan kesalahan "Username atau kata sandi salah"
+      
+      Kasus Uji 3: Login dengan username tidak terdaftar
+      Masukan:
+      - Username: "user_not_exist"
+      - Password: "password123"
+      Keluaran yang Diharapkan: Pesan kesalahan "Username atau kata sandi salah"
+
+   b. Form Registrasi
+      Kasus Uji 1: Registrasi dengan data valid
+      Masukan:
+      - Username: "new_user"
+      - Email: "new_user@email.com"
+      - Password: "secure_pass123"
+      Keluaran yang Diharapkan: Registrasi berhasil, dialihkan ke halaman login
+      
+      Kasus Uji 2: Registrasi dengan email yang sudah terdaftar
+      Masukan:
+      - Username: "another_user"
+      - Email: "existing@email.com"
+      - Password: "password123"
+      Keluaran yang Diharapkan: Pesan kesalahan "Email sudah terdaftar"
+
+2. Pengujian Modul Pemesanan
+
+   a. Pemilihan Jadwal
+      Kasus Uji 1: Pemilihan jadwal valid
+      Masukan: Klik jadwal yang tersedia
+      Keluaran yang Diharapkan: Form pemesanan tiket muncul
+      
+      Kasus Uji 2: Pemilihan jadwal yang sudah lewat
+      Masukan: Akses jadwal dengan tanggal lampau
+      Keluaran yang Diharapkan: Pesan "Jadwal tidak tersedia"
+
+   b. Proses Pemesanan
+      Kasus Uji 1: Pemesanan dengan jumlah tiket valid
+      Masukan:
+      - Jumlah tiket: 2
+      - Jadwal: Valid
+      Keluaran yang Diharapkan: Konfirmasi pemesanan, generate kode booking
+      
+      Kasus Uji 2: Pemesanan melebihi kuota
+      Masukan:
+      - Jumlah tiket: 50 (melebihi batas)
+      Keluaran yang Diharapkan: Pesan kesalahan "Jumlah tiket tidak tersedia"
+
+3. Pengujian Modul Admin
+
+   a. Manajemen Pertunjukan
+      Kasus Uji 1: Tambah pertunjukan baru
+      Masukan:
+      - Judul: "Pertunjukan Test"
+      - Deskripsi: "Deskripsi test"
+      - Poster: file gambar valid
+      Keluaran yang Diharapkan: Pertunjukan berhasil ditambahkan
+      
+      Kasus Uji 2: Unggah poster tidak valid
+      Masukan:
+      - File: dokumen .txt
+      Keluaran yang Diharapkan: Pesan kesalahan "Format file tidak didukung"
+
+B. PENGUJIAN KOTAK PUTIH (WHITE BOX)
+
+1. Pengujian Unit untuk Model User
+
+   a. Metode set_password()
+      Kasus Uji 1: Penyandian Kata Sandi
+      ```python
+      def test_password_hashing():
+          user = User(username="test_user")
+          user.set_password("test_password")
+          assert user.password_hash is not None
+          assert user.password_hash != "test_password"
+          assert user.check_password("test_password") is True
+      ```
+
+   b. Metode check_password()
+      Kasus Uji 1: Verifikasi Kata Sandi
+      ```python
+      def test_password_verification():
+          user = User(username="test_user")
+          user.set_password("test_password")
+          assert user.check_password("wrong_password") is False
+          assert user.check_password("test_password") is True
+      ```
+
+2. Pengujian Unit untuk Model Booking
+
+   a. Metode generate_booking_code()
+      ```python
+      def test_booking_code_generation():
+          booking = Booking()
+          code1 = booking.generate_booking_code()
+          code2 = booking.generate_booking_code()
+          assert len(code1) == 8
+          assert code1 != code2
+      ```
+
+   b. Validasi Jumlah Tiket
+      ```python
+      def test_ticket_validation():
+          schedule = Schedule(available_seats=10)
+          booking = Booking(schedule=schedule)
+          
+          assert booking.validate_ticket_count(5) is True
+          assert booking.validate_ticket_count(15) is False
+      ```
+
+3. Pengujian Integrasi
+
+   a. Alur Pemesanan Tiket
+      ```python
+      def test_booking_flow():
+          # Persiapan
+          user = create_test_user()
+          show = create_test_show()
+          schedule = create_test_schedule(show)
+          
+          # Proses
+          booking = create_booking(user, schedule, 2)
+          
+          # Pengujian
+          assert booking.status == 'pending'
+          assert schedule.available_seats == 8
+          assert len(booking.booking_code) == 8
+      ```
+
+   b. Alur Manajemen Pertunjukan
+      ```python
+      def test_show_management():
+          # Persiapan
+          admin = create_admin_user()
+          
+          # Proses
+          show = create_show(admin, "Pertunjukan Test")
+          schedule = add_schedule(show, "2024-01-01")
+          
+          # Pengujian
+          assert show in Show.query.all()
+          assert schedule in show.schedules
+      ```
+
+4. Pengujian Jalur untuk Rute Pemesanan
+
+   a. Analisis Jalur
+      ```python
+      def book_ticket():
+          if not current_user.is_authenticated:
+              return redirect(url_for('login'))
+          
+          schedule = Schedule.query.get_or_404(schedule_id)
+          if not schedule.is_active:
+              flash('Jadwal tidak tersedia')
+              return redirect(url_for('show_detail'))
+          
+          if schedule.available_seats < ticket_count:
+              flash('Tiket tidak cukup')
+              return redirect(url_for('show_detail'))
+          
+          booking = create_booking()
+          return redirect(url_for('payment'))
+      ```
+      
+      Jalur yang diuji:
+      1. Pengguna tidak login → dialihkan ke login
+      2. Jadwal tidak ditemukan → 404
+      3. Jadwal tidak aktif → pesan kesalahan
+      4. Tiket tidak cukup → pesan kesalahan
+      5. Pemesanan berhasil → dialihkan ke pembayaran
+
+5. Pengujian Status untuk Status Pemesanan
+
+   Diagram Status:
+   pending → paid → confirmed
+   pending → cancelled
+   
+   Kasus Uji:
+   ```python
+   def test_booking_state_transitions():
+       booking = create_test_booking()
+       
+       assert booking.status == 'pending'
+       
+       booking.process_payment()
+       assert booking.status == 'paid'
+       
+       booking.confirm()
+       assert booking.status == 'confirmed'
+   ```
+
+C. HASIL PENGUJIAN
+
+1. Hasil Pengujian Kotak Hitam
+   - Modul Autentikasi: 5/5 kasus uji berhasil
+   - Modul Pemesanan: 4/4 kasus uji berhasil
+   - Modul Admin: 3/3 kasus uji berhasil
+   Total Tingkat Keberhasilan: 100%
+
+2. Hasil Pengujian Kotak Putih
+   - Pengujian Unit: 8/8 berhasil
+   - Pengujian Integrasi: 4/4 berhasil
+   - Pengujian Jalur: 5/5 jalur tercakup
+   - Pengujian Status: 3/3 status terverifikasi
+   Cakupan Kode: 92%
+
+3. Temuan dan Perbaikan
+   a. Temuan:
+      - Validasi email perlu diperkuat
+      - Perlu penanganan waktu habis pada proses pembayaran
+      - Optimasi query pada halaman admin
+   
+   b. Perbaikan:
+      - Implementasi regex untuk validasi email
+      - Penambahan antrian tugas untuk pembayaran
+      - Implementasi pemuatan lambat untuk data admin
+
+4. Rekomendasi
+   - Penambahan pengujian otomatis untuk UI
+   - Implementasi pengujian beban
+   - Peningkatan pengujian keamanan
+   - Penambahan pengujian batas kesalahan

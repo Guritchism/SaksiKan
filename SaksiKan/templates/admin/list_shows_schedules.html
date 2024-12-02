@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Kelola Jadwal Pertunjukan</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row mt-4">
+        {% for show in shows %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if show.poster_path %}
+                <img src="{{ url_for('static', filename=show.poster_path) }}" 
+                     class="card-img-top" alt="{{ show.title }}"
+                     style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ show.title }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">{{ show.production }}</small><br>
+                        <small class="text-muted">{{ show.location }}</small>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-info">{{ show.schedules|length }} Jadwal</span>
+                        <a href="{{ url_for('manage_schedules', show_id=show.id) }}" 
+                           class="btn btn-primary">Kelola Jadwal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

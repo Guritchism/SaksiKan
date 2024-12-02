@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Show Details -->
+        <div class="col-md-4">
+            {% if show.poster_path %}
+            <img src="{{ url_for('static', filename=show.poster_path) }}" class="img-fluid rounded" alt="{{ show.title }}">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <span>No Image Available</span>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h2>{{ show.title }}</h2>
+            <p class="text-muted">{{ show.production }}</p>
+            <p>{{ show.description }}</p>
+            <p><strong>Lokasi:</strong> {{ show.location }}</p>
+
+            <!-- Schedules -->
+            <div class="mt-4">
+                <h4>Jadwal Pertunjukan</h4>
+                {% set active_schedules = show.schedules|selectattr('is_active')|selectattr('date', '>=', now)|list %}
+                {% if active_schedules %}
+                    <div class="list-group">
+                    {% for schedule in active_schedules|sort(attribute='date') %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ schedule.date.strftime('%d %B %Y') }}</h6>
+                                    <p class="mb-1">{{ schedule.date.strftime('%H:%M') }} WIB</p>
+                                    <small class="text-muted">Rp {{ schedule.price|format_price }}</small>
+                                </div>
+                                <div>
+                                    {% if schedule.available_seats > 0 %}
+                                        {% if current_user.is_authenticated %}
+                                            <a href="{{ url_for('book_ticket', schedule_id=schedule.id) }}" 
+                                               class="btn btn-primary">Pesan Tiket</a>
+                                        {% else %}
+                                            <a href="{{ url_for('login') }}" class="btn btn-primary">Login untuk Pesan</a>
+                                        {% endif %}
+                                        <br>
+                                        <small class="text-muted">Tersisa {{ schedule.available_seats }} kursi</small>
+                                    {% else %}
+                                        <button class="btn btn-secondary" disabled>Tiket Habis</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        Belum ada jadwal pertunjukan yang tersedia.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

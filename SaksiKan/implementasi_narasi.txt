@@ -1,0 +1,142 @@
+IMPLEMENTASI SISTEM PEMESANAN TIKET PERTUNJUKAN SAKSIKAN
+
+Sistem pemesanan tiket pertunjukan SaksiKan diimplementasikan sebagai aplikasi web berbasis Python menggunakan framework Flask. Implementasi sistem ini dirancang dengan mempertimbangkan aspek fungsionalitas, keamanan, dan pengalaman pengguna. Berikut adalah penjelasan detail mengenai implementasi sistem:
+
+1. ALUR PENGGUNA (USER FLOW)
+
+A. Alur Pengguna Regular
+   1. Registrasi dan Login
+      - Pengguna mengakses halaman utama
+      - Memilih opsi registrasi untuk akun baru
+      - Mengisi form registrasi (username, email, password)
+      - Setelah registrasi berhasil, login dengan kredensial
+      - Sistem mengarahkan ke halaman utama dengan akses pengguna
+
+   2. Pemesanan Tiket
+      - Melihat daftar pertunjukan di halaman utama
+      - Memilih pertunjukan yang diminati
+      - Melihat detail pertunjukan dan jadwal tersedia
+      - Memilih jadwal dan jumlah tiket
+      - Mengisi form pemesanan
+      - Menerima kode booking
+      - Melakukan pembayaran
+      - Menerima konfirmasi pemesanan
+
+   3. Manajemen Pesanan
+      - Mengakses halaman "Pesanan Saya"
+      - Melihat daftar pesanan dan statusnya
+      - Melihat detail setiap pesanan
+      - Mengunduh atau menyimpan tiket
+      - Melihat riwayat pemesanan
+
+B. Alur Admin
+   1. Manajemen Pertunjukan
+      - Login sebagai admin
+      - Mengakses dashboard admin
+      - Menambah pertunjukan baru
+      - Mengatur detail pertunjukan
+      - Mengunggah poster
+      - Mengedit atau menghapus pertunjukan
+
+   2. Manajemen Jadwal
+      - Memilih pertunjukan
+      - Menambah jadwal baru
+      - Mengatur ketersediaan kursi
+      - Menetapkan harga tiket
+      - Mengaktifkan atau menonaktifkan jadwal
+
+   3. Monitoring Sistem
+      - Memantau pemesanan aktif
+      - Verifikasi pembayaran
+      - Mengelola pengguna
+      - Melihat laporan dan statistik
+
+2. ARSITEKTUR SISTEM
+
+SaksiKan mengadopsi arsitektur Model-View-Controller (MVC) yang diimplementasikan melalui Flask framework. Pemilihan arsitektur ini memungkinkan pemisahan yang jelas antara logika bisnis, presentasi data, dan penanganan request pengguna.
+
+Model dalam sistem ini direpresentasikan oleh empat entitas utama:
+- User: Menyimpan informasi pengguna termasuk kredensial dan role
+- Show: Mengelola data pertunjukan seperti judul, produksi, dan deskripsi
+- Schedule: Mengatur jadwal dan ketersediaan tiket untuk setiap pertunjukan
+- Booking: Mencatat transaksi pemesanan tiket oleh pengguna
+
+3. IMPLEMENTASI DATABASE
+
+Database sistem menggunakan SQLite yang diintegrasikan melalui SQLAlchemy ORM (Object-Relational Mapping). Pemilihan SQLite didasarkan pada pertimbangan kemudahan deployment dan maintenance. SQLAlchemy memungkinkan manipulasi data menggunakan objek Python, sehingga mempermudah pengembangan dan pemeliharaan kode.
+
+Relasi antar tabel diimplementasikan sebagai berikut:
+- User-Booking: One-to-Many (satu user dapat memiliki banyak booking)
+- Show-Schedule: One-to-Many (satu pertunjukan dapat memiliki banyak jadwal)
+- Schedule-Booking: One-to-Many (satu jadwal dapat memiliki banyak booking)
+
+4. MANAJEMEN PENGGUNA
+
+Sistem mengimplementasikan dua level akses pengguna: admin dan pengguna regular. Implementasi ini menggunakan Flask-Login untuk manajemen sesi dan autentikasi. Keamanan password ditangani menggunakan Werkzeug Security yang mengimplementasikan password hashing untuk penyimpanan yang aman.
+
+Fitur manajemen pengguna meliputi:
+- Registrasi dengan validasi data
+- Login dengan pengecekan kredensial
+- Manajemen sesi yang aman
+- Role-based access control untuk membatasi akses ke fitur admin
+
+5. MANAJEMEN PERTUNJUKAN DAN JADWAL
+
+Implementasi manajemen pertunjukan dan jadwal dirancang dengan mempertimbangkan fleksibilitas dan kemudahan penggunaan. Admin dapat:
+- Mengunggah dan mengelola poster pertunjukan dengan pembatasan ukuran file
+- Mengatur detail pertunjukan termasuk lokasi dan deskripsi
+- Mengelola jadwal dengan sistem yang mencegah konflik waktu
+- Mengatur ketersediaan kursi dan harga tiket
+
+6. SISTEM PEMESANAN
+
+Proses pemesanan tiket diimplementasikan dengan alur yang intuitif:
+a. Pemilihan pertunjukan dan jadwal
+b. Pengecekan ketersediaan kursi secara real-time
+c. Pembuatan kode booking unik menggunakan kombinasi karakter acak
+d. Pencatatan status pembayaran
+e. Notifikasi konfirmasi pemesanan
+
+7. KEAMANAN SISTEM
+
+Implementasi keamanan sistem mencakup beberapa aspek:
+- CSRF Protection untuk mencegah serangan cross-site request forgery
+- Validasi input untuk mencegah injeksi data berbahaya
+- Pembatasan akses berdasarkan role pengguna
+- Sanitasi file upload untuk mencegah eksekusi file berbahaya
+- Logging system untuk monitoring aktivitas sistem
+
+8. OPTIMASI PERFORMA
+
+Untuk memastikan performa yang optimal, sistem mengimplementasikan:
+- Sistem caching menggunakan Flask-Caching
+- Optimasi query database
+- Lazy loading untuk gambar dan konten berat
+- Pembatasan ukuran file upload
+
+9. ANTARMUKA PENGGUNA
+
+Implementasi antarmuka pengguna mengutamakan responsivitas dan kemudahan penggunaan:
+- Template HTML responsif menggunakan Bootstrap
+- JavaScript untuk interaksi dinamis
+- Form handling dengan validasi client-side dan server-side
+- Feedback visual untuk aksi pengguna
+- Tata letak yang intuitif untuk kemudahan navigasi
+
+10. PENANGANAN ERROR
+
+Sistem mengimplementasikan penanganan error yang komprehensif:
+- Custom error pages untuk berbagai jenis error
+- Logging system untuk mencatat error
+- Feedback yang informatif untuk pengguna
+- Mekanisme recovery untuk kegagalan operasi
+
+11. DEPLOYMENT
+
+Implementasi sistem mempertimbangkan kemudahan deployment:
+- Dependency management menggunakan requirements.txt
+- Konfigurasi yang fleksibel melalui environment variables
+- Database migration support
+- Static file serving yang efisien
+
+Implementasi sistem SaksiKan dirancang dengan mempertimbangkan aspek maintainability, scalability, dan security. Penggunaan teknologi modern seperti Flask, SQLAlchemy, dan Bootstrap memastikan sistem dapat dikembangkan lebih lanjut dengan mudah sesuai kebutuhan di masa depan.

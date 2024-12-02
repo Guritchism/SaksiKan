@@ -1,0 +1,171 @@
+PENJELASAN SOURCE CODE SISTEM SAKSIKAN
+
+A. STRUKTUR APLIKASI
+
+Aplikasi SaksiKan dibangun menggunakan struktur modular dengan file-file utama sebagai berikut:
+
+1. app.py (File Utama)
+   File ini merupakan jantung dari aplikasi yang mengatur seluruh komponen sistem. Di dalamnya terdapat inisialisasi aplikasi Flask dan konfigurasi dasar seperti secret key dan database URI. Aplikasi menggunakan SQLite sebagai database dengan URI 'sqlite:///saksikan.db'.
+
+   Bagian awal file berisi import modul-modul yang diperlukan:
+   - Flask untuk framework web
+   - SQLAlchemy untuk ORM database
+   - Flask-Login untuk manajemen autentikasi
+   - Werkzeug.security untuk hashing password
+   
+   Konfigurasi aplikasi mencakup:
+   - Pengaturan secret key untuk keamanan sesi
+   - Konfigurasi upload folder untuk poster
+   - Pembatasan ukuran file upload
+   - Inisialisasi sistem cache
+
+2. Model Database
+   
+   Di dalam app.py, terdapat definisi model-model database yang merepresentasikan struktur data:
+
+   a. Model User
+      - Menyimpan informasi pengguna dengan field: id, username, email, password_hash
+      - Mengimplementasikan metode set_password() untuk hashing password
+      - Mengimplementasikan metode check_password() untuk verifikasi
+      - Memiliki field is_admin untuk kontrol akses
+      - Terhubung ke model Booking melalui relationship
+
+   b. Model Show
+      - Mengelola data pertunjukan dengan field: id, title, production, description
+      - Menyimpan informasi poster dalam poster_path
+      - Memiliki field location untuk tempat pertunjukan
+      - Terhubung ke model Schedule melalui relationship cascade
+
+   c. Model Schedule
+      - Mengatur jadwal pertunjukan dengan field: id, show_id, date
+      - Mengelola ketersediaan dengan field available_seats
+      - Menyimpan informasi harga dalam field price
+      - Memiliki status aktif melalui field is_active
+      - Terhubung ke model Booking untuk pencatatan pemesanan
+
+   d. Model Booking
+      - Mencatat pemesanan dengan field: id, user_id, schedule_id
+      - Menyimpan jumlah tiket dalam ticket_count
+      - Menggunakan booking_code untuk identifikasi unik
+      - Mencatat metode dan status pembayaran
+      - Menyimpan waktu pembuatan dengan created_at
+
+3. Route dan View Functions
+
+   Implementasi route dalam app.py dibagi menjadi beberapa kategori:
+
+   a. Route Autentikasi
+      - /login: Menangani proses login dengan validasi kredensial
+      - /register: Memproses registrasi user baru
+      - /logout: Menangani proses logout
+
+   b. Route Pertunjukan
+      - /: Menampilkan daftar pertunjukan aktif
+      - /show/<id>: Menampilkan detail pertunjukan
+      - /book/<schedule_id>: Menangani proses pemesanan
+
+   c. Route Admin
+      - /admin/dashboard: Panel kontrol admin
+      - /admin/shows: Manajemen pertunjukan
+      - /admin/schedules: Manajemen jadwal
+      - /admin/bookings: Monitoring pemesanan
+      - /admin/users: Manajemen pengguna
+
+4. Template HTML
+
+   Template diorganisir dalam struktur folder yang jelas:
+
+   a. Layout Dasar (base.html)
+      - Mendefinisikan struktur umum halaman
+      - Memuat CSS dan JavaScript yang diperlukan
+      - Implementasi navbar dan footer
+
+   b. Template Autentikasi
+      - login.html: Form login dengan validasi
+      - register.html: Form registrasi dengan validasi
+
+   c. Template Pertunjukan
+      - show_list.html: Grid pertunjukan dengan filter
+      - show_detail.html: Informasi lengkap pertunjukan
+      - booking_form.html: Form pemesanan tiket
+
+   d. Template Admin
+      - dashboard.html: Overview sistem
+      - show_management.html: CRUD pertunjukan
+      - schedule_management.html: CRUD jadwal
+      - user_management.html: Manajemen pengguna
+
+5. Implementasi Keamanan
+
+   Keamanan diimplementasikan melalui beberapa lapisan:
+
+   a. Autentikasi
+      - Password di-hash menggunakan Werkzeug
+      - Implementasi remember-me dengan token aman
+      - Proteksi terhadap brute force attack
+
+   b. Otorisasi
+      - Dekorator @login_required untuk proteksi route
+      - Dekorator @admin_required untuk akses admin
+      - Validasi role pada setiap akses sensitif
+
+   c. Keamanan Form
+      - CSRF protection pada semua form
+      - Validasi input server-side
+      - Sanitasi data sebelum penyimpanan
+
+6. Penanganan File
+
+   Upload dan manajemen file diimplementasikan dengan aman:
+
+   a. Upload Poster
+      - Validasi tipe file (hanya gambar)
+      - Pemberian nama file yang aman
+      - Pembatasan ukuran maksimal
+
+   b. Penyimpanan File
+      - Struktur folder terorganisir
+      - Pembersihan file tidak terpakai
+      - Backup file penting
+
+7. Optimasi Performa
+
+   Beberapa strategi optimasi diterapkan:
+
+   a. Database
+      - Indexing pada kolom yang sering dicari
+      - Eager loading untuk mengurangi query
+      - Connection pooling untuk efisiensi
+
+   b. Caching
+      - Implementasi Flask-Caching
+      - Cache pada query yang sering diakses
+      - Cache invalidation yang tepat
+
+   c. Asset Management
+      - Minifikasi CSS dan JavaScript
+      - Lazy loading untuk gambar
+      - Browser caching yang optimal
+
+8. Error Handling
+
+   Penanganan error diimplementasikan secara komprehensif:
+
+   a. Custom Error Pages
+      - 404: Halaman tidak ditemukan
+      - 403: Akses ditolak
+      - 500: Error server
+
+   b. Logging
+      - Rotasi log file
+      - Level log yang sesuai
+      - Format log yang informatif
+
+Implementasi source code di atas dirancang dengan memperhatikan prinsip-prinsip:
+- DRY (Don't Repeat Yourself)
+- Separation of Concerns
+- SOLID principles
+- Security best practices
+- Clean Code principles
+
+Setiap komponen diimplementasikan dengan dokumentasi yang jelas dan komentar yang informatif untuk memudahkan maintenance dan pengembangan lebih lanjut.
