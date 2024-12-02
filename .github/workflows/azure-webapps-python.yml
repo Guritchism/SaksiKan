@@ -6,8 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: SaksiKan
+  AZURE_WEBAPP_NAME: saksikan
   PYTHON_VERSION: '3.12'
+  RESOURCE_GROUP: saksikan_group
 
 jobs:
   build-and-deploy:
@@ -44,5 +45,6 @@ jobs:
       uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        resource-group: ${{ env.RESOURCE_GROUP }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: .
