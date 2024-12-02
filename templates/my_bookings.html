@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Pesanan Saya</h2>
+    </div>
+</div>
+
+<div class="row">
+    {% if bookings %}
+        {% for booking in bookings %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ booking.schedule.show.title }}</h5>
+                    <p class="card-text">
+                        <strong>Tanggal:</strong> {{ booking.schedule.date.strftime('%d %B %Y') }}<br>
+                        <strong>Waktu:</strong> {{ booking.schedule.date.strftime('%H:%M') }}<br>
+                        <strong>Lokasi:</strong> {{ booking.schedule.show.location }}<br>
+                        <strong>Jumlah Tiket:</strong> {{ booking.ticket_count }}<br>
+                        <strong>Total Bayar:</strong> Rp {{ (booking.ticket_count * booking.schedule.price)|format_price }}<br>
+                        <strong>Status:</strong> 
+                        <span class="badge bg-{{ 'success' if booking.payment_status == 'verified' else 'warning' }}">
+                            {{ 'Terverifikasi' if booking.payment_status == 'verified' else 'Menunggu Pembayaran' }}
+                        </span>
+                    </p>
+                    <div class="alert alert-info">
+                        <strong>Kode Booking:</strong>
+                        <h4 class="mb-0">{{ booking.booking_code }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col">
+            <div class="alert alert-info">
+                Anda belum memiliki pesanan tiket. 
+                <a href="{{ url_for('index') }}" class="alert-link">Pesan tiket sekarang!</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

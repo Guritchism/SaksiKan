@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-1">500</h1>
+    <h2>Kesalahan Server</h2>
+    <p class="lead">Maaf, terjadi kesalahan pada server kami. Tim kami sedang menangani masalah ini.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Kembali ke Beranda</a>
+</div>
+{% endblock %}
