@@ -1,0 +1,119 @@
+DOKUMENTASI SAKSIKAN - SISTEM PEMESANAN TIKET PERTUNJUKAN
+
+A. FITUR UTAMA
+
+1. Manajemen Pengguna
+   - Registrasi akun baru
+   - Login/logout pengguna
+   - Sistem role (admin dan pengguna regular)
+   - Manajemen profil pengguna
+
+2. Manajemen Pertunjukan (Admin)
+   - Menambah pertunjukan baru
+   - Mengedit informasi pertunjukan
+   - Menghapus pertunjukan
+   - Upload poster pertunjukan
+   - Pengaturan lokasi dan detail pertunjukan
+
+3. Manajemen Jadwal (Admin)
+   - Menambah jadwal untuk pertunjukan
+   - Mengatur jumlah kursi tersedia
+   - Mengatur harga tiket
+   - Mengedit/menghapus jadwal
+   - Status aktif/nonaktif jadwal
+
+4. Sistem Pemesanan
+   - Pemilihan pertunjukan dan jadwal
+   - Pemesanan tiket dengan jumlah yang diinginkan
+   - Kode booking unik
+   - Status pembayaran
+   - Riwayat pemesanan
+
+5. Dashboard Admin
+   - Manajemen pengguna
+   - Overview pertunjukan
+   - Monitoring pemesanan
+   - Verifikasi pembayaran
+
+B. IMPLEMENTASI TEKNIS
+
+1. Backend Framework
+   - Flask (Python web framework)
+   - SQLAlchemy untuk database ORM
+   - Flask-Login untuk manajemen autentikasi
+   - Werkzeug untuk keamanan password
+
+2. Database
+   - SQLite database
+   - Model:
+     * User (pengguna)
+     * Show (pertunjukan)
+     * Schedule (jadwal)
+     * Booking (pemesanan)
+
+3. Frontend
+   - HTML templates dengan Jinja2
+   - Bootstrap untuk styling
+   - JavaScript untuk interaktivitas
+   - Form handling dengan WTForms
+
+4. Keamanan
+   - Password hashing
+   - Proteksi CSRF
+   - Role-based access control
+   - Secure file upload
+
+5. Fitur Teknis Tambahan
+   - Caching untuk optimasi performa
+   - Logging system
+   - Error handling
+   - File upload management
+   - Pembatasan ukuran file
+
+C. STRUKTUR APLIKASI
+
+1. Routes Utama
+   - / (homepage)
+   - /login
+   - /register
+   - /show/<id>
+   - /book/<schedule_id>
+   - /admin/*
+   - /bookings
+   - /verify/<code>
+
+2. Direktori
+   - /templates: File HTML
+   - /static: Asset statis (CSS, JS, images)
+   - /logs: File log aplikasi
+   - /instance: Database dan file konfigurasi
+
+D. PANDUAN PENGGUNAAN
+
+1. Untuk Pengguna
+   - Registrasi akun baru
+   - Browse pertunjukan yang tersedia
+   - Pilih jadwal dan pesan tiket
+   - Cek status pemesanan
+   - Lihat riwayat pemesanan
+
+2. Untuk Admin
+   - Akses dashboard admin
+   - Kelola pertunjukan dan jadwal
+   - Monitor pemesanan
+   - Kelola pengguna
+   - Verifikasi pembayaran
+
+E. KEBUTUHAN SISTEM
+
+1. Dependencies
+   - Python 3.x
+   - Flask dan extension-nya
+   - SQLite
+   - Web browser modern
+
+2. Konfigurasi
+   - SECRET_KEY untuk keamanan
+   - Konfigurasi upload folder
+   - Database URI
+   - Cache settings
