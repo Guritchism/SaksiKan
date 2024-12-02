@@ -8,14 +8,10 @@ on:
 env:
   AZURE_WEBAPP_NAME: saksikan
   PYTHON_VERSION: '3.12'
-  RESOURCE_GROUP: saksikan_group
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
     - uses: actions/checkout@v4
@@ -29,24 +25,29 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
-
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install gunicorn
         
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-app
-        path: |
-          . 
-          !venv/
-          
-    - name: Deploy to Azure Web Apps
-      id: deploy-to-webapp
+    - name: Create required directories
+      run: |
+        mkdir -p static/posters
+        
+    - name: Prepare for deployment
+      run: |
+        echo "Initializing application..."
+        export FLASK_APP=app.py
+        export FLASK_ENV=production
+        python -c "from app import db; db.create_all()"
+        
+    - name: Zip artifact for deployment
+      run: zip -r release.zip . -x "venv/*"
+      
+    - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: release.zip
