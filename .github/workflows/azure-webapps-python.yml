@@ -8,7 +8,6 @@ on:
 env:
   AZURE_WEBAPP_NAME: saksikan
   PYTHON_VERSION: '3.12'
-  RESOURCE_GROUP: saksikan_group
 
 jobs:
   build-and-deploy:
